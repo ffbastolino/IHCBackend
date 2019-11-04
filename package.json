@@ -1,0 +1,50 @@
+{
+  "name": "wine2me",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "debug": "nodemon --inspect app.js",
+    "eslint": "eslint",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "sonarLint": "eslint -f json -o report.json .",
+    "migrate": "npx migrate-mongo up",
+    "migrate-start": "npm run migrate && npm run start",
+    "start": "node app.js",
+    "test": "NODE_ENV=test mocha --timeout 60000 --exit",
+    "coverage": "NODE_ENV=test nyc mocha --timeout 60000 --exit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "~2.8.5",
+    "dotenv": "~8.1.0",
+    "express": "~4.17.1",
+    "migrate-mongo": "~6.0.2",
+    "moment": "~2.24.0",
+    "mongodb": "~3.3.2",
+    "mongoose": "~5.7.1",
+    "morgan": "~1.9.1",
+    "nyc": "~14.1.1",
+    "swagger-ui-express": "~4.0.7",
+    "winston": "~3.2.1",
+    "yamljs": "~0.3.0"
+  },
+  "devDependencies": {
+    "chai": "~4.2.0",
+    "chai-as-promised": "~7.1.1",
+    "chai-things": "~0.2.0",
+    "eslint": "~6.1.0",
+    "eslint-config-airbnb": "~18.0.1",
+    "eslint-config-airbnb-base": "~14.0.0",
+    "eslint-plugin-import": "~2.18.2",
+    "eslint-plugin-jsx-a11y": "~6.2.1",
+    "eslint-plugin-react": "~7.13.0",
+    "eslint-plugin-sonarjs": "~0.4.0",
+    "mocha": "~6.2.1",
+    "mongodb-memory-server": "~5.2.8",
+    "nodemon": "~1.19.2"
+  }
+}

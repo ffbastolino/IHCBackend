@@ -1,0 +1,1000 @@
+swagger: '2.0'
+
+schemes:
+  - http
+  - https
+
+basePath: /api
+
+info:
+  version: 1.0.0
+  title: Wine2Me Api
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+  - application/pdf
+
+securityDefinitions:
+ BasicAuth:
+   type: oauth2
+
+security:
+- BasicAuth: []
+
+paths:
+  /wine/:
+    get:
+      summary: Busca todos os vinhos.
+      description: Busca todos os vinhos registrados no banco de dados.
+      tags:
+        - Wine
+
+      operationId: listAllWines
+
+      parameters:
+        - in: query
+          type: string
+          name: page
+          description: Por default = 0
+
+      responses:
+        200:
+          description: Vinhos encontrados.
+          schema:
+            $ref: '#/definitions/ArrayOfWines'
+        500:
+          description: Erro interno no servidor
+
+    post:
+      summary: Insere um novo um novo vinho no banco de dados.
+      description: Insere um novo um novo vinho no banco de dados após validação.
+
+      tags:
+        - Wine
+
+      operationId: validateAndCreateWine
+
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Wine'
+
+      responses:
+        201:
+          description: Vinho criado
+          schema:
+            $ref: '#/definitions/Wine'
+
+        400:
+          descripton: Vinho enviado não é valido
+          schema:
+            $ref: '#/definitions/InvalidWine'
+
+        500:
+          description: Erro interno no servidor
+
+    put:
+      summary: Edita informações de um vinho.
+      description: Edita informações de um vinho no banco de dados.
+
+      tags:
+        - Wine
+
+      operationId: updateWineById
+
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/WineToUpdate'
+
+      responses:
+        204:
+          description: Editado com sucesso.
+          example: '{ updated: true }'
+
+        400:
+          description: Requisição inválida.
+          schema:
+            $ref: '#/definitions/InvalidRequest'
+
+        404:
+          description: Vinho não encontrado
+          schema:
+            $ref: '#/definitions/WineNotFound'
+        
+        422:
+          description: Requisição não pdoe ser processada.
+          schema:
+            $ref: '#definitions/UnprocessableRequest'
+        
+        500:
+          description: Erro interno no servidor.
+   
+  /wine/search:
+      get:
+        summary: Busca todos os vinhos pelo nome informado e por uma página passada.
+        description: Busca todos os vinhos, pelo nome informado, registrados no banco de dados.
+        tags:
+          - Wine
+          
+        operationId: listWineByName
+        
+        parameters:
+          - in: query
+            type: string
+            name: name
+            description: Bastardo
+          - in: query
+            type: string
+            name: page
+            description: "0" 
+
+        responses:
+          200:
+            description: Vinhos encontrados.
+            schema:
+              $ref: '#/definitions/ArrayOfWines'
+
+          500:
+            description: Erro interno no servidor.    
+
+
+  /wishedWines/:
+      get:
+        summary: Busca todos os vinhos desejados.
+        description: Busca todos os vinhos desejados registrados no banco de dados.
+        tags:
+          - Wishedwine
+
+        operationId: listAllWishedWines
+
+        parameters:
+          - in: query
+            type: string
+            name: page
+            description: Por default = 0
+
+        responses:
+          200:
+            description: Vinhos encontrados.
+            schema:
+              $ref: '#/definitions/ArrayOfWishes'
+
+          500:
+            description: Erro interno no servidor.
+
+  /wishedWines/id:
+      get:
+        summary: Busca um vinho desejado.
+        description: Busca um vinho desejado por id registrado no banco de dados.
+        tags:
+          - Wishedwine
+
+        operationId: listWishedWineById
+
+        parameters:
+          - in: query
+            type: string
+            name: id
+            required: true
+
+        responses:
+          200:
+            description: Vinho encontrado.
+            schema:
+              $ref: '#/definitions/DetailedWishedWine'
+
+          400:
+            description: Requisição inválida.
+            schema:
+              $ref: '#/definitions/InvalidRequest'
+
+          404:
+            description: Vinho não encontrado.
+            schema:
+              $ref: '#/definitions/WineNotFound'
+
+          422:
+            description: Requisição não pdoe ser processada.
+            schema:
+              $ref: '#/definitions/UnprocessableRequest' 
+
+          500:
+            description: Erro interno no servidor
+
+  /wishedWines/featured:
+      get:
+        summary: Busca os vinhos desejados em destaque.
+        description: Busca os últimos vinhos que foram colocados como desejo de um usuário.
+        tags:
+          - Wishedwine
+
+        operationId: listFeaturedWishedWines
+
+        responses:
+          200:
+            description: Vinhos encontrados.
+            schema:
+              $ref: '#/definitions/ArrayOfWishes'
+
+          500:
+            description: Erro interno no servidor          
+
+  /wishedWines/myWishes:
+      get:
+        summary: Busca todos os vinhos desejados do usuário.
+        description: Busca todos os vinhos que o usuário esta desejando.
+        tags:
+          - Wishedwine
+
+        operationId: listMyWishes
+
+        parameters:
+          - in: query
+            type: string
+            name: userId
+            required: true
+            description: 5db1a901a4bfa528df073fcc
+
+        responses:
+          200:
+            description: Desejos encontrados.
+            schema:
+              $ref: '#/definitions/ArrayOfWishedWine'
+
+          500:
+            description: Erro interno no servidor 
+
+  /wishedWines/myPurchasesInProgress:
+      get:
+        summary: Busca todos os vinhos desejados do usuário.
+        description: Busca todos os vinhos que o usuário esta desejando.
+        tags:
+          - Wishedwine
+
+        operationId: listMyPurchasesInProgress
+
+        parameters:
+          - in: query
+            type: string
+            name: userId
+            required: true
+            description: 5db1a901a4bfa528df073fcc
+
+        responses:
+          200:
+            description: Desejos encontrados.
+            schema:
+              $ref: '#/definitions/ArrayOfWishedWine'
+
+          500:
+            description: Erro interno no servidor 
+
+  /offeredWines/:
+    get:
+      summary: Busca todos os vinhos sendo oferecidos.
+      description: Busca todos os vinhos sendo oferericdos registrado no banco de dados.
+      tags:
+        - Offeredwine
+
+      operationId: listAllOfferedWines
+
+      parameters:
+        - in: query
+          type: string
+          name: page
+          description: Por default = 0
+
+      responses:
+        200:
+          description: Vinhos encontrados.
+          schema:
+            $ref: '#/definitions/ArrayOfOffers'
+
+        500:
+          description: Erro interno no servidor
+
+  /offeredWines/id:
+      get:
+        summary: Busca um vinho oferecido.
+        description: Busca um vinho oferecido por id registrado no banco de dados.
+        tags:
+          - Offeredwine
+
+        operationId: listOfferById
+
+        parameters:
+          - in: query
+            type: string
+            name: id
+            required: true
+
+        responses:
+          200:
+            description: Vinho encontrado.
+            schema:
+              $ref: '#/definitions/DetailedOfferedWine'
+
+          400:
+            description: Requisição inválida.
+            schema:
+              $ref: '#/definitions/InvalidRequest'
+
+          404:
+            description: Vinho não encontrado.
+            schema:
+              $ref: '#/definitions/WineNotFound'
+
+          422:
+            description: Requisição não pdoe ser processada.
+            schema:
+              $ref: '#/definitions/UnprocessableRequest' 
+
+          500:
+            description: Erro interno no servidor.
+
+  /offeredWines/featured:
+      get:
+        summary: Busca os vinhos oferecidos em destaque.
+        description: Busca os últimos vinhos que foram colocados como ofertados.
+        tags:
+          - Offeredwine
+
+        operationId: listFeaturedOfferedWines
+
+        responses:
+          200:
+            description: Vinhos encontrados.
+            schema:
+              $ref: '#/definitions/ArrayOfOffers'
+
+          500:
+            description: Erro interno no servidor
+            
+  /offeredWines/myOffers:
+      get:
+        summary: Busca todos os vinhos ofertados do usuário.
+        description: Busca todos os vinhos que o usuário esta ofertando.
+        tags:
+          - Offeredwine
+
+        operationId: listMyOffers
+
+        parameters:
+          - in: query
+            type: string
+            name: userId
+            required: true
+            description: 5db1a901a4bfa528df073fcb
+
+        responses:
+          200:
+            description: Ofertas encontradas.
+            schema:
+              $ref: '#/definitions/ArrayOfOfferedWine'
+
+          500:
+            description: Erro interno no servidor
+            
+  /offeredWines/mySalesInProgress:
+      get:
+        summary: Busca todos os vinhos ofertados do usuário.
+        description: Busca todos os vinhos que o usuário esta ofertando.
+        tags:
+          - Offeredwine
+
+        operationId: listMySalesInProgress
+
+        parameters:
+          - in: query
+            type: string
+            name: userId
+            required: true
+            description: 5db1a901a4bfa528df073fcb
+
+        responses:
+          200:
+            description: Ofertas encontradas.
+            schema:
+              $ref: '#/definitions/ArrayOfOfferedWine'
+
+          500:
+            description: Erro interno no servidor             
+    
+  /user/newAddress:
+      post:
+        summary: Insere um novo um novo endereço em um usuário no banco de dados.
+        description: Insere um novo um novo endereço em um usuário,pelo seu id, no banco de dados, após validação.
+        tags:
+          - User
+
+        operationId: addNewAddress
+
+        parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/AddAddress'
+
+        responses:
+          201:
+            description: Todos endereços
+            schema:
+              $ref: '#/definitions/ArrayOfDetailedAddress'    
+
+          400:
+            descripton: Endereço enviado não é valido
+            schema:
+              $ref: '#/definitions/InvalidAddress'
+
+          500:
+            description: Erro interno no servidor
+       
+  /user/searchName:
+      get:
+        summary: Busca um usuário pelo seu nome
+        description: Busca um usuário no banco de dados, a partir do nome inserido.
+        tags:
+          - User
+
+        operationId: listUserByName
+
+        parameters:
+        - in: query
+          type: string
+          name: name
+          required: true
+
+        responses:
+          201:
+            description: Usuário
+            schema:
+              $ref: '#/definitions/User'    
+
+          500:
+            description: Erro interno no servidor           
+
+definitions:
+  ArrayOfWines:
+    type: array
+    items:
+      $ref: '#/definitions/Wine'
+  
+  ArrayOfOfferedWine:
+    type: array
+    items:
+      $ref: '#/definitions/OfferedWine'
+
+  ArrayOfWishedWine:
+    type: array
+    items:
+      $ref: '#/definitions/WishedWine'    
+
+  WishedWine:
+    type: object
+    properties:
+      wineId:
+        type: string
+        example: 5daf5d4f48c47d231108e7fd       
+      
+      name:
+        type: string
+        example: Bastardo
+
+      year:
+        type: integer
+        format: int32
+        example: 2013
+
+      winery:
+        type: string
+        example: Horácio Simões
+
+      country:
+        type: integer
+        format: int32
+        example: 14
+
+      region:
+        type: string
+        example: Palmela  
+
+      imgUrl:
+        type: string
+        example: http://images.vivino.com/thumbs/urYaaOrXRQudJD-ROnCe2w_pb_x960.png
+
+      type:
+        type: integer
+        fomart: int32
+        example: 2      
+
+  Wine:
+    type: object
+    properties:
+      wineId:
+        type: string
+        example: 5d97834225d3ca214fab45d1
+
+      name:
+        type: string
+        example: Bastardo
+
+      year:
+        type: integer
+        format: int32
+        example: 2013
+
+      price:
+        type: number
+        format: float
+        example: 87.64
+
+      grapes:
+        type: array
+        items:
+          type: string
+          example: Trousseau
+
+      winery:
+        type: string
+        example: Horácio Simões
+
+      country:
+        type: integer
+        format: int32
+        example: 14
+
+      region:
+        type: string
+        example: Palmela  
+
+      imgUrl:
+        type: string
+        example: http://images.vivino.com/thumbs/urYaaOrXRQudJD-ROnCe2w_pb_x960.png
+
+      type:
+        type: integer
+        format: int32
+        example: 2  
+
+  WineNotFound:
+    type: object
+    properties:
+      error:
+        type: string
+        example: updateWineById error
+
+      reasons:
+        type: string
+        example: Wine not found
+
+  WineType:
+    type: object
+    properties:
+      red:
+        type: integer
+        format: int32
+        example: 0
+      rosé:
+        type: integer
+        format: int32
+        example: 1
+      dessert:
+        type: integer
+        format: int32
+        example: 2
+      white:
+        type: integer
+        format: int32
+        example: 3      
+      sparkling:
+        type: integer
+        format: int32
+        example: 4
+      port:
+        type: integer
+        format: int32
+        example: 5
+  
+  CountryFlags:
+    type: object
+    properties:
+      default:
+        type: integer
+        format: int32
+        example: 0
+      Argentina:
+        type: integer
+        format: int32
+        example: 1
+      Austrália:
+        type: integer
+        format: int32
+        example: 2
+      Áustria:
+        type: integer
+        format: int32
+        example: 3
+      Brasil:
+        type: integer
+        format: int32
+        example: 4
+      Chile:
+        type: integer
+        format: int32
+        example: 5
+      França:
+        type: integer
+        format: int32
+        example: 6
+      Alemanha:
+        type: integer
+        format: int32
+        example: 7
+      Grécia:
+        type: integer
+        format: int32
+        example: 8
+      Hungria:
+        type: integer
+        format: int32
+        example: 9
+      Israel:
+        type: integer
+        format: int32
+        example: 10
+      Itália:
+        type: integer
+        format: int32
+        example: 11
+      Líbano:
+        type: integer
+        format: int32
+        example: 12
+      Nova Zelândia:
+        type: integer
+        format: int32
+        example: 13
+      Portugal:
+        type: integer
+        format: int32
+        example: 14
+      Romênia:
+        type: integer
+        format: int32
+        example: 15
+      África do Sul:
+        type: integer
+        format: int32
+        example: 16
+      Espanha:
+        type: integer
+        format: int32
+        example: 17
+      Estados Unidos:
+        type: integer
+        format: int32
+        example: 18
+      Uruguai:
+        type: integer
+        format: int32
+        example: 19      
+
+  User:
+    type: object
+    properties:
+      _id: 
+        type: ObjectId
+        example: 5db1a901a4bfa528df073fcc
+      name:
+        type: string
+        example: Vinicius de Borba
+      addresses:
+        type: object
+        $ref: '#/definitions/DetailedAddress' 
+      grade:
+        type: number
+        format: float
+        example:  4.8        
+
+
+  Address:
+    type: object
+    properties:
+      state:
+        type: string
+        example: Rio Grande do Sul
+      city:
+        type: string
+        example: Porto Alegre
+      address:
+        type: string
+        example: Rua Siqueira Campos
+      number:
+        type: integer
+        format: int32
+        example: 1184
+  
+  ArrayOfDetailedAddress:
+    type: array
+    items:
+      $ref: '#/definitions/DetailedAddress'      
+
+  DetailedAddress:
+    type: object
+    properties:
+      cep:
+        type: string
+        example: 92200-470
+      type:
+        type: integer
+        format: int32
+        example: 1
+      country:
+        type: string
+        example: Brasil
+      state:
+        type: string
+        example: Rio Grande do Sul
+      city:
+        type: string
+        example: Porto Alegre
+      address:
+        type: string
+        example: Rua Siqueira Campos
+      number:
+        type: integer
+        format: int32
+        example: 1184
+      main:
+        type: boolean
+        exampel: false
+        
+  AddAddress:
+    type: object
+    properties:
+      userId:
+        type: string
+        example: 5db1a901a4bfa528df073fcc
+      newAddress:
+        type: object
+        properties:  
+          cep:
+            type: string
+            example: 92200-470
+          type:
+            type: integer
+            format: int32
+            example: 1
+          country:
+            type: string
+            example: Brasil
+          state:
+            type: string
+            example: Rio Grande do Sul
+          city:
+            type: string
+            example: Porto Alegre
+          address:
+            type: string
+            example: Rua Siqueira Campos
+          number:
+            type: integer
+            format: int32
+            example: 1184
+          main:
+            type: boolean
+            exampel: false         
+        
+  ShortAddress:
+    type: object
+    properties:
+      state:
+        type: string
+        example: Rio Grande do Sul
+      city:
+        type: string
+        example: Porto Alegre
+
+  InvalidWine:
+    type: object
+    properties:
+      error:
+        type: string
+        example: createWine validation failed
+
+      reasons:
+        type: array
+        items:
+          type: string
+          example: wine grapes are required
+   
+  InvalidAddress:
+    type: object
+    properties:
+      error:
+        type: string
+        example: updateAddress validation failed        
+
+  WineToUpdate:
+    type: object
+    properties:
+      wineId:
+        type: string
+        example: 5d97834225d3ca214fab45d1
+
+      update:
+        $ref: '#/definitions/Wine'
+
+  UnprocessableRequest:
+    type: object
+    properties:
+      error:
+        type: string
+        example: updateWineById validation error
+
+      reaseons:
+        type: string
+        example: invalid id
+ 
+  InvalidRequest:
+    type: object
+    properties:
+      error:
+        type: string
+        example: updateWineById validation error
+
+      reasons:
+        type: string
+        example: id must be informed
+
+  ArrayOfWishes:
+    type: array
+    items:
+      $ref: '#/definitions/Wish'
+
+  Wish:
+    type: object
+    properties:
+      wishId:
+        type: string
+        example: 5daf5d5048c47d231108e819
+      wine:
+        $ref: '#/definitions/WishedWine'
+      user:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Vinicius de Borba
+
+
+  DetailedWishedWine:
+    type: object
+    properties:
+      wishId:
+        type: string
+        example: 5daf5d5048c47d231108e819
+      wine:
+        $ref: '#/definitions/WishedWine'
+      user:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Vinicius de Borba
+          address:
+            $ref: '#/definitions/Address'
+          grade:
+            type: number
+            format: float
+            example: 4.8
+  
+  ArrayOfFeaturedWishedWines:
+    type: array
+    items:
+      $ref: '#/definitions/WishedWine'                
+
+  ArrayOfOffers:
+    type: array
+    items:
+      $ref: '#/definitions/Offers'
+
+  OfferedWine:
+    type: object
+    properties:
+      wineId:
+        type: string
+        example: 5daf5d4f48c47d231108e80b       
+      
+      name:
+        type: string
+        example: Pêra-Manca Tint
+
+      year:
+        type: integer
+        format: int32
+        example: 2013
+
+      price:
+        type: float
+        example: 3388.87  
+
+      winery:
+        type: string
+        example: Cartuxa
+
+      country:
+        type: integer
+        format: int32
+        example: 14
+
+      region:
+        type: string
+        example: Palmela
+
+      imgUrl:
+        type: string
+        example: http://images.vivino.com/thumbs/L33jsYUuTMWTMy3KoqQyXg_pb_x600.png
+
+      type:
+        type: integer
+        format: int32
+        example: 0      
+
+  Offers:
+    type: object
+    properties:
+      offerId:
+        type: string
+        example: 5d9b86fb844cfba160e47b30
+
+      wine:
+        $ref: '#/definitions/OfferedWine'
+
+      user:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Felipe Fernandes Bastos
+
+      origin:
+          type: integer
+          format: int32
+          example: 1
+        
+
+  DetailedOfferedWine:
+    type: object
+    properties:
+      offerId:
+        type: string
+        example: 5daf5d5048c47d231108e811
+      wine:
+        $ref: '#/definitions/OfferedWine'
+      user:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Felipe Fernandes Bastos
+          address:
+            $ref: '#/definitions/Address'
+          grade:
+            type: number
+            format: float
+            example: 4.5
+      origin:
+        type: number
+        format: int32
+        example: 1
+

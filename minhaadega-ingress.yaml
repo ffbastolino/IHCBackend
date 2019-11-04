@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: minhaadega-ingress-$BRANCH
+  namespace: minhaadega
+spec:
+  rules:
+  - host: minhaadega-${BRANCH}.ingress.softdesign-rs.com.br
+    http:
+      paths:
+      - backend:
+          serviceName: minhaadega-service-${BRANCH}
+          servicePort: 3001
+        path: /

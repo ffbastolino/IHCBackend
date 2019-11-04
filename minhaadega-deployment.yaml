@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minhaadega-deployment-$BRANCH
+  namespace: minhaadega
+spec:
+  selector:
+    matchLabels:
+      app: minhaadega-$BRANCH
+  template:
+    metadata:
+      labels:
+        app: minhaadega-$BRANCH
+    spec:
+      containers:
+
+      - name: minhaadega-container-$BRANCH
+        image: registry.softdesign-rs.com.br/minhaadega/api:$BRANCH
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3001
+        env:
+          - name: W2M_DB_URI
+            value: mongodb://minhaadega-service-$BRANCH:27017
+          - name: W2M_DB_NAME
+            value: Wine2Me
+          - name: W2M_LOGGER_LEVEL
+            value: debug
+          - name: W2M_API_PORT
+            value: "3001"
+      - name: minhaadega-mongo-$BRANCH
+        image: mongo:4.2
+        ports:
+          - containerPort: 27017
+        volumeMounts:
+         - mountPath: /data/db
+           name: minhaadega-volume
+
+      volumes:
+      - name: minhaadega-volume
+        persistentVolumeClaim:
+          claimName: minhaadega-pvc-$BRANCH
+
+
+
+
