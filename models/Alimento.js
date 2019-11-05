@@ -13,6 +13,10 @@ const AlimentoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  corredor:{
+    type: Number,
+    required:true,
+  }
 });
 
 mongoose.model('Alimento', AlimentoSchema);
