@@ -6,6 +6,7 @@ const converteAlimentoParaJson= (alimento) => ({
   nome: alimento.nome,
   imagem: alimento.imgUrl,
   tipo: alimento.tipo,
+  corredor: alimento.corredor,
 });
 
 
